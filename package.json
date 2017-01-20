@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon -e html,js,css /Users/akhaya/Dropbox/Immersive/Week 2/wikistack/app.js"
   },
   "author": "",
   "license": "ISC",
@@ -14,6 +15,10 @@
     "morgan": "^1.7.0",
     "nunjucks": "^3.0.0",
     "pg": "^6.1.2",
+    "pg-hstore": "^2.3.2",
     "sequelize": "^3.29.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
   }
 }
