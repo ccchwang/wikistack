@@ -11,7 +11,6 @@ router.use(express.static('public')) //ask about this later
 router.get('/',function(req, res, next){
   Page.findAll()
   .then(function(pages){
-    console.log(pages)
     res.render('index', {pages: pages})
   })
 

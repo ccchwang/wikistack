@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const routes = require('./routes');
 const wikiRouter = require('./routes/wiki')
+const userRoutes = require('./routes/users')
 const db = require('./models')
 
 //nunjucks boilerplate
@@ -21,16 +22,17 @@ app.use(bodyParser.json()); // would be for AJAX requests
 //app.use(express.static(path.join(__dirname, '/public')))
 
 app.use('/wiki', wikiRouter)
+app.use('/users', userRoutes)
 
 app.use('/',routes);
 
 
 //server
 
-db.User.sync({force: true})
+db.User.sync({})
 .then(function(){
   console.log("Synced User")
-  return db.Page.sync({force: true})
+  return db.Page.sync({})
 }).then(function(){
   app.listen(3000,function(){
     console.log("Server listening on port 3000.")

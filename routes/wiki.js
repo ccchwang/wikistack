@@ -24,6 +24,7 @@ wiki.get('/:title',function(req, res, next){
     }
   }).then(function(result) {
     var page=result[0].dataValues;
+    console.log(page)
     res.render('wikipage', {title: page.title,
       content: page.content})
   }).catch(function(err){
@@ -40,19 +41,33 @@ wiki.post('/', function(req, res, next) {
   var content = req.body.content;
   var name = req.body.name;
   var email = req.body.email;
+  var user,page;
 
-  var page = Page.build({
-    title: title,
-    content: content,
+  User.findOrCreate({
+    where: {
+      name: name,
+      email: email}
+  }).then(function(result){
+    console.log("Result:", result)
+    user = result[0]
+    console.log(user)
+
+    page = Page.build({
+      title: title,
+      content: content
+    })
+
+    return page.save().then(function(page){
+      return page.setAuthor(user);
+    });
+  }).then(function(page){
+    res.redirect(page.route)
+  }).catch(function(err){
+    res.render('error', err);
   });
 
   // STUDENT ASSIGNMENT:
   // make sure we only redirect *after* our save is complete!
   // note: `.save` returns a promise or it can take a callback.
-  page.save().then(function(result){
-    res.redirect(result.route)
-  }).catch(function(err){
-    res.render('error', err);
-  });
   // -> after save -> res.redirect('/');
 });
