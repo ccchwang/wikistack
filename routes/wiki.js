@@ -17,16 +17,18 @@ wiki.get('/add',function(req, res, next){
 
 wiki.get('/:title',function(req, res, next){
   var title = req.params.title;
-
-  Page.findAll({
+  var page;
+  Page.findOne({
     where: {
       urlTitle: title
-    }
-  }).then(function(result) {
-    var page=result[0].dataValues;
-    console.log(page)
-    res.render('wikipage', {title: page.title,
-      content: page.content})
+    },
+    include: [
+      {model: User, as: 'author'}
+    ]
+  }).then(function(page) {
+    console.log('User:',page.author);
+    console.log('Page:',page);
+    res.render('wikipage', {page:page})
   }).catch(function(err){
     res.render('error', err)
   });

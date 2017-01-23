@@ -21,5 +21,5 @@ users.get('/:id',function(req, res, next){
   })
   Promise.all([userPromise,pagePromise]).then(function(resultArr){
     res.render('userpage', {author: resultArr[0], pages: resultArr[1]})
-  })
+  }).catch(next)
 })

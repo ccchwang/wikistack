@@ -28,12 +28,8 @@ app.use('/',routes);
 
 
 //server
-
-db.User.sync({})
+Promise.all([db.User.sync({}),db.Page.sync({})])
 .then(function(){
-  console.log("Synced User")
-  return db.Page.sync({})
-}).then(function(){
   app.listen(3000,function(){
     console.log("Server listening on port 3000.")
   });
