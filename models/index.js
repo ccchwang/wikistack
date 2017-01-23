@@ -27,6 +27,10 @@ var Page = db.define('page', {
     type: Sequelize.DATE,
     defaultValue: Sequelize.NOW
   }
+}, {
+  getterMethods :{
+    route: function(){ return '/wiki/'+ this.getDataValue('urlTitle');}
+  }
 });
 
 var User = db.define('user', {
@@ -38,10 +42,6 @@ var User = db.define('user', {
     type:Sequelize.STRING,
     allowNull: false,
     isEmail: true
-  }
-}, {
-  getterMethods :{
-    route: function(){ return '/wiki/'+ this.getDataValue('urlTitle');}
   }
 });
 
