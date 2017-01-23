@@ -4,7 +4,9 @@ const nunjucks = require('nunjucks');
 const bodyParser = require('body-parser');
 const app = express();
 const routes = require('./routes');
+const wikiRouter = require('./routes/wiki')
 const db = require('./models')
+
 //nunjucks boilerplate
 app.engine('html',nunjucks.render);
 app.set('view engine','html');
@@ -18,17 +20,20 @@ app.use(bodyParser.json()); // would be for AJAX requests
 
 //app.use(express.static(path.join(__dirname, '/public')))
 
+app.use('/wiki', wikiRouter)
+
 app.use('/',routes);
+
+
 //server
 
-
-db.User.sync({})
+db.User.sync({force: true})
 .then(function(){
   console.log("Synced User")
-  return db.Page.sync()
+  return db.Page.sync({force: true})
 }).then(function(){
-  app.listen(1337,function(){
-    console.log("Server listening on port 1337.")
+  app.listen(3000,function(){
+    console.log("Server listening on port 3000.")
   });
 }).catch(console.error)
 

@@ -10,12 +10,6 @@ var Page = db.define('page', {
     type: Sequelize.STRING,
     allowNull: false
   },
-  // route: {
-  //   get: function(){
-  //     var url=this.getDataValue('urlTitle');
-  //     return '/wiki/' + url;
-  //   }
-  // },
   content: {
     type: Sequelize.TEXT,
     allowNull: false
@@ -33,6 +27,14 @@ var Page = db.define('page', {
   }
 });
 
+Page.hook('beforeValidate', function(page, options){
+    if (page.title) {
+      page.urlTitle = page.title.replace(/[^a-zA-z0-9]/g,"_")
+    } else {
+      page.urlTitle = Math.random().toString(36).substring(2, 7)
+    }
+})
+
 var User = db.define('user', {
   name: {
     type:Sequelize.STRING,
@@ -44,6 +46,8 @@ var User = db.define('user', {
     isEmail: true
   }
 });
+
+Page.belongsTo(User, { as: 'author' });
 
 module.exports = {
   Page: Page,
