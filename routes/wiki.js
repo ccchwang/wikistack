@@ -15,6 +15,18 @@ wiki.get('/add',function(req, res, next){
   res.render('addpage')
 })
 
+wiki.get('/:url/similar',function(req, res, next){
+  Page.findOne({
+    where: {
+      urlTitle:req.params.url
+    }
+  }).then((page)=>{
+    return page.findSimilar();
+  }).then((result)=>{
+    res.render('index', {pages: result})
+  })
+})
+
 wiki.get('/:title',function(req, res, next){
   var title = req.params.title;
   var page;
@@ -26,9 +38,11 @@ wiki.get('/:title',function(req, res, next){
       {model: User, as: 'author'}
     ]
   }).then(function(page) {
-    console.log('User:',page.author);
-    console.log('Page:',page);
-    res.render('wikipage', {page:page})
+    if (page===null){
+      res.status(404).send();
+    } else{
+      res.render('wikipage', {page:page})
+    }
   }).catch(function(err){
     res.render('error', err)
   });
@@ -43,8 +57,9 @@ wiki.post('/', function(req, res, next) {
   var content = req.body.content;
   var name = req.body.name;
   var email = req.body.email;
+  var tags= req.body.tags.replace(/\s+/g,'').split(',');
   var user,page;
-
+  console.log(tags)
   User.findOrCreate({
     where: {
       name: name,
@@ -56,7 +71,8 @@ wiki.post('/', function(req, res, next) {
 
     page = Page.build({
       title: title,
-      content: content
+      content: content,
+      tags: tags
     })
 
     return page.save().then(function(page){

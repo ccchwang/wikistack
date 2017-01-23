@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <h3>Search By Tag</h3>
+  <hr>
+  <form method="GET" action="/search/">
+
+    <div class="form-group">
+      <label for="tagName" class="col-sm-2 control-label">Tag</label>
+      <div class="col-sm-10">
+        <input name="tagName" type="text" class="form-control"/>
+      </div>
+    </div>
+
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-primary">Search!</button>
+    </div>
+
+  </form>
+  {% if showResult %}
+  <hr>
+   <h3>Results</h3>
+   <ul class="list-unstyled">
+    {% for page in pages %}
+      <li><a href='{{page.route}}'>{{page.title}}</a></li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+{% endblock %}
+

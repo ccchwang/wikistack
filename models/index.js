@@ -20,10 +20,34 @@ var Page = db.define('page', {
   date: {
     type: Sequelize.DATE,
     defaultValue: Sequelize.NOW
+  },
+  tags: {
+    type: Sequelize.ARRAY(Sequelize.TEXT)
   }
 }, {
   getterMethods :{
     route: function(){ return '/wiki/'+ this.getDataValue('urlTitle');}
+  },
+  instanceMethods: {
+    findSimilar: function(){
+      return Page.findAll({
+        // $overlap matches a set of possibilities
+        where : {
+          tags: { $overlap: [this.tags]},
+          id: {$ne: this.id}
+        }
+      })
+    }
+  },
+  classMethods: {
+    findByTagName: function(tagArray){
+      return Page.findAll({
+        // $overlap matches a set of possibilities
+        where : {
+          tags: { $overlap: [tagArray]}
+        }
+      })
+    }
   }
 });
 
