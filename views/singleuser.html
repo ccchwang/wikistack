@@ -3,6 +3,12 @@
 {% block content %}
   <h3>Pages</h3>
   <hr>
+  <div>
+    <h4>{{user.name}}'s Page</h4>
+    <p>{{user.email}}</p>
+  </div>
+
+  <hr>
   <ul class="list-unstyled">
   {% for page in pages %}
     <li> <a href="{{page.route}}">{{page.title}} </a> (#{{page.id}})</li>

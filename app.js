@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const routes = require('./routes');
 const db = require('./models')
+
 //nunjucks boilerplate
 app.engine('html',nunjucks.render);
 app.set('view engine','html');
@@ -16,18 +17,17 @@ app.use(morgan('dev'))//log info about requests
 app.use(bodyParser.urlencoded({ extended: true })); // for HTML form submits
 app.use(bodyParser.json()); // would be for AJAX requests
 
-//app.use(express.static(path.join(__dirname, '/public')))
-
+//router
 app.use('/',routes);
-//server
 
 
-db.User.sync({})
+//database and server
+db.User.sync({logging: false})
 .then(function(){
   console.log("Synced User")
-  return db.Page.sync()
+  return db.Page.sync({logging: false})
 }).then(function(){
-  app.listen(1337,function(){
+  app.listen(3000, function(){
     console.log("Server listening on port 1337.")
   });
 }).catch(console.error)

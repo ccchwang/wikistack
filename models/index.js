@@ -4,28 +4,38 @@ var db = new Sequelize('postgres://localhost:5432/wikistack');
 var Page = db.define('page', {
   title: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
   },
   urlTitle: {
     type: Sequelize.STRING,
     allowNull: false
   },
-  // route: {
-  //   get: function(){
-  //     var url=this.getDataValue('urlTitle');
-  //     return '/wiki/' + url;
-  //   }
-  // },
   content: {
     type: Sequelize.TEXT,
     allowNull: false
+  },
+  tags: {
+    type: Sequelize.ARRAY(Sequelize.TEXT)
   },
   status: {
     type: Sequelize.ENUM('open', 'closed')
   },
   date: {
-    type: Sequelize.DATE,
+    type: Sequelize.DATEONLY,
     defaultValue: Sequelize.NOW
+  }
+}, {
+  hooks: {
+    beforeValidate: function(page) {
+      if (page.title) {
+      page.urlTitle = page.title.replace(/\s+/g, "_");
+    } else {
+      page.urlTitle = Math.random().toString(36).substring(2, 7)
+    }
+    }
+  }, getterMethods: {
+    route: function(){ return '/wiki/'+ this.urlTitle
+  }
   }
 });
 
@@ -37,13 +47,11 @@ var User = db.define('user', {
   email: {
     type:Sequelize.STRING,
     allowNull: false,
-    isEmail: true
-  }
-}, {
-  getterMethods :{
-    route: function(){ return '/wiki/'+ this.getDataValue('urlTitle');}
+    validate: {isEmail: true}
   }
 });
+
+Page.belongsTo(User, { as: 'author' });
 
 module.exports = {
   Page: Page,
