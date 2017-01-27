@@ -52,6 +52,23 @@ wikiRouter.get('/add', function(req, res, next){
 });
 
 
+// GET /wiki/:params/similar (needs to BEFORE the one below, or else below will match every time and never get routed to similar handler)
+wikiRouter.get('/:title/similar', function(req, res, next){
+  var title = req.params.title;
+  var foundPage;
+
+  Page.findOne({
+    where: {
+      title: title
+    }
+  }).then((page) => {
+    return page.findSimilar()
+  }).then((similarPages) => {
+    res.render('index', {pages: similarPages})
+  }).catch(next);
+
+})
+
 // GET /wiki/:params (needs to go under add, or would add would always get redirected here)
 wikiRouter.get('/:title', function(req, res, next){
   var title = req.params.title;

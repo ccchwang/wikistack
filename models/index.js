@@ -15,7 +15,13 @@ var Page = db.define('page', {
     allowNull: false
   },
   tags: {
-    type: Sequelize.ARRAY(Sequelize.TEXT)
+    type: Sequelize.ARRAY(Sequelize.TEXT),
+    set: function(val) {
+      val = val.toString().toLowerCase().split(",");
+      var tags = [];
+      val.forEach((tag) => {tag.trim(); tags.push(tag)})
+      this.setDataValue('tags', tags)
+    }
   },
   status: {
     type: Sequelize.ENUM('open', 'closed')
@@ -36,6 +42,31 @@ var Page = db.define('page', {
   }, getterMethods: {
     route: function(){ return '/wiki/'+ this.urlTitle
   }
+  }, classMethods: {
+      findByTag: function(tag) {
+        return Page.findAll({
+          // $overlap matches a set of possibilities
+          where: {
+              tags: {
+                  $overlap: [tag]
+              }
+            }
+        });
+      }
+  }, instanceMethods: {
+      findSimilar: function(){
+        return Page.findAll({
+          // $overlap matches a set of possibilities
+          where: {
+              tags: {
+                  $overlap: [...this.tags],
+              },
+              id: {
+                $ne: this.id
+              }
+            }
+        });
+      }
   }
 });
 

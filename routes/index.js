@@ -21,7 +21,15 @@ router.get('/',function(req, res, next){
     })
     .catch(next)
 
+});
 
+router.get('/search',function(req, res, next){
+  var query = req.query.tag;
+  Page.findByTag(query)
+    .then((foundPages) => {
+      res.render('search', {pages: foundPages, showForm: true})
+    })
+    .catch(next)
 })
 
 
